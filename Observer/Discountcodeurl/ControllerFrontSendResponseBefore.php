@@ -27,11 +27,6 @@ class ControllerFrontSendResponseBefore implements \Magento\Framework\Event\Obse
 	 */
 	private $registry;
 
-	/**
-	 * @var \Magento\Framework\Message\ManagerInterface
-	 */
-	private $messageManager;
-
 	/************************************************************************/
 
 	/**
@@ -45,13 +40,11 @@ class ControllerFrontSendResponseBefore implements \Magento\Framework\Event\Obse
 	public function __construct(
 		\Crankycyclops\DiscountCodeUrl\Helper\Config $config,
 		\Crankycyclops\DiscountCodeUrl\Helper\Cookie $cookieHelper,
-		\Magento\Framework\Registry $registry,
-		\Magento\Framework\Message\ManagerInterface $messageManager
+		\Magento\Framework\Registry $registry
 	) {
 		$this->config = $config;
 		$this->cookieHelper = $cookieHelper;
 		$this->registry = $registry;
-		$this->messageManager = $messageManager;
 	}
 
 	/************************************************************************/
@@ -77,18 +70,9 @@ class ControllerFrontSendResponseBefore implements \Magento\Framework\Event\Obse
 		if ($this->config->isEnabled()) {
 
 			$coupon = $this->registry->registry('crankycyclops_discounturl_coupon');
-			$message = $this->registry->registry('crankycyclops_discounturl_message');
 
 			if ($coupon) {
 				$this->cookieHelper->setCookie($coupon);
-			}
-
-			if ($message) {
-				if ($message['error']) {
-					$this->messageManager->addErrorMessage($message['message']);
-				} else {
-					$this->messageManager->addSuccessMessage($message['message']);
-				}
 			}
 		}
 	}

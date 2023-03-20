@@ -53,8 +53,9 @@ class FrontControllerInterface {
 	private $checkoutSession;
 
 	/************************************************************************/
+    private \Magento\Framework\Message\ManagerInterface $messageManager;
 
-	/**
+    /**
 	 * Constructor
 	 *
 	 * @param \Magento\Framework\App\RequestInterface $request
@@ -74,7 +75,8 @@ class FrontControllerInterface {
 		\Magento\SalesRule\Model\Coupon $couponModel,
 		\Magento\SalesRule\Model\Rule $ruleModel,
 		\Magento\Framework\Registry $registry,
-		\Magento\Checkout\Model\Session $checkoutSession
+		\Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Framework\Message\ManagerInterface $messageManager
 	) {
 		$this->request = $request;
 		$this->config = $config;
@@ -84,7 +86,8 @@ class FrontControllerInterface {
 		$this->ruleModel = $ruleModel;
 		$this->registry = $registry;
 		$this->checkoutSession = $checkoutSession;
-	}
+        $this->messageManager = $messageManager;
+    }
 
 	/************************************************************************/
 
@@ -232,6 +235,17 @@ class FrontControllerInterface {
 					]);
 				}
 			}
+
+
+            $message = $this->registry->registry('crankycyclops_discounturl_message');
+
+            if ($message) {
+                if ($message['error']) {
+                    $this->messageManager->addErrorMessage($message['message']);
+                } else {
+                    $this->messageManager->addSuccessMessage($message['message']);
+                }
+            }
 		}
 	}
 
